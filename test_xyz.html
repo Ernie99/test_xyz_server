@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>title</title>
+  </head>
+  <body>
+      <p>
+          note: this file test_xyz.html doesn not need to be run
+          on a server but jquery-3.1.1.js must be in the same path
+      </p>
+      <label><input type="checkbox">check for samples per sec (unchecked is samples per min)</label>
+      <br>
+      <label><input type="number">CLIENT sample rate</label>
+
+      <br>
+      <button>START polling</button>
+      <button>STOP polling</button>
+      <h1>connected to server that supports CORS: <span id="cors_ip">###.###.###.###</span></h1>
+      <h1>XYZ values</h1>
+      <h2>
+        x:&nbsp;<span id="x_val">no x</span><br>
+        y:&nbsp;<span id="y_val">no y</span><br>
+        z:&nbsp;<span id="z_val">no z</span><br>
+        server time-stamp:&nbsp;<span id="ts_val">no time-stamp</span>
+
+
+      </h2>
+      <h1>refreshed every:&nbsp;<span id="refresh_time">###</span></h1>
+      <h2>XYZ, with server time-stamp <span id="values">###,###,###,time</span>
+
+  <script src="jquery-3.1.1.js"></script>
+  <!--<script src="//ajax.googleapis.com/ajax/libs/jquery/1.7.2/jquery.min.js" type="text/javascript"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.8.21/jquery-ui.min.js" type="text/javascript"></script>-->
+  <script type="text/javascript">
+    var sampleRate=40; //per min
+    
+
+    function parseResponse(data){
+        var dataSplit = data.split(",");
+        return {
+            x: dataSplit[0],
+            y: dataSplit[1],
+            z: dataSplit[2],
+            timeStamp: dataSplit[3]
+        };
+    }
+
+
+    function autorun()
+    {
+        // $("p").text('ernie');
+        // $("#values").text="hello workd"
+        $.get('http://localhost:8888', function(data){
+            console.log("response string", data);
+            var payloadObj = parseResponse(data);
+            console.log("response json", payloadObj);
+
+
+            $("#x_val").text(payloadObj.x);
+            $("#y_val").text(payloadObj.y);
+            $("#z_val").text(payloadObj.z);
+            $("#ts_val").text(payloadObj.timeStamp);
+        })
+
+    };
+    if (document.addEventListener) document.addEventListener("DOMContentLoaded", autorun, false);
+    else if (document.attachEvent) document.attachEvent("onreadystatechange", autorun);
+    else window.onload = autorun;
+  </script>
+  </body>
+</html>
